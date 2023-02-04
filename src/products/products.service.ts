@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { Product, Variant } from './product.model';
+import { Product } from './models/product.model';
 
 import * as fs from 'fs';
 
 @Injectable()
 export class ProductsService {
+  constructor() {
+    this.products = JSON.parse(
+      fs.readFileSync(`${__dirname}/../../data/Product.json`, 'utf-8'),
+    );
+  }
+
   private products: Product[] = [];
 
   getProducts() {
-    return JSON.parse(
-      fs.readFileSync(`${__dirname}/../../data/Product.json`, 'utf-8'),
-    );
+    return this.products;
   }
 
   insertProduct(
@@ -42,46 +46,6 @@ export class ProductsService {
       body_html,
     );
     this.products.push(newProduct);
-    return id;
-  }
-
-  private variants: Variant[] = [];
-
-  insertVariant(
-    id: number,
-    product_id: number,
-    title: string,
-    price: number,
-    sku: string,
-    position: string,
-    option1: string,
-    option2: string,
-    created_at: string,
-    updated_at: string,
-    taxable: boolean,
-    weight: number,
-    weight_unit: string,
-    presentment_prices: any,
-    requires_shipping: boolean,
-  ) {
-    const newVariant = new Variant(
-      id,
-      product_id,
-      title,
-      price,
-      sku,
-      position,
-      option1,
-      option2,
-      created_at,
-      updated_at,
-      taxable,
-      weight,
-      weight_unit,
-      presentment_prices,
-      requires_shipping,
-    );
-    this.variants.push(newVariant);
     return id;
   }
 }
